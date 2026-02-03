@@ -111,7 +111,7 @@ pred = model.predict(X_latest_scaled)[0]
 # STORE PREDICTION + EVALUATION
 # -------------------------------
 prediction_document = {
-    "prediction_date": datetime.now(timezone.utc),
+    "prediction_date": datetime.now(UTC) + timedelta(hours=5),
     "input_date": latest_doc.get("date"),
 
     "predictions": {
@@ -155,6 +155,7 @@ datastore_doc["AQI_t+3"] = float(pred[2])
 db.datastore.insert_one(datastore_doc)
 
 print("✅ Last AQI feature row + predictions stored in datastore")
+
 
 
 
