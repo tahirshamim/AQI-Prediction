@@ -7,7 +7,7 @@ client = MongoClient(os.environ["MONGO_URI"])
 db = client["aqi_mlops"]
 
 # ------------------ STEP 1: Compute daily AQI from hourly ------------------
-end = datetime.now(timezone.utc)
+end = datetime.now(UTC) + timedelta(hours=5) #PKT time
 start = end - timedelta(hours=24)
 
 cursor = db.raw_aqi_hourly.find({
@@ -66,5 +66,6 @@ db.aqi_features.update_one(
 )
 
 print("✅ Daily AQI + features stored in aqi_features")
+
 
 
