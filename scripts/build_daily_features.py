@@ -3,9 +3,9 @@ from pymongo import MongoClient
 from datetime import datetime, timedelta, timezone
 
 # ------------------ MongoDB ------------------
-client = MongoClient(
-    "mongodb+srv://tahirbinshamim_db_user:42034700@cluster0.2gfzzp7.mongodb.net/?appName=Cluster0"
-)
+import os
+
+client = MongoClient(os.environ["MONGO_URI"])
 db = client["aqi_mlops"]
 
 # ------------------ STEP 1: Compute daily AQI from hourly ------------------
@@ -68,3 +68,4 @@ db.aqi_features.update_one(
 )
 
 print("✅ Daily AQI + features stored in aqi_features")
+
