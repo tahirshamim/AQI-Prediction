@@ -1,0 +1,30 @@
+name: Hourly AQI Fetch
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # Every hour
+  workflow_dispatch:
+
+jobs:
+  fetch-hourly:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Fetch hourly AQI
+      env:
+        MONGO_URI: ${{ secrets.MONGO_URI }}
+        WAQI_API_KEY: ${{ secrets.WAQI_API_KEY }}
+      run: |
+        python scripts/fetch_and_store_hourly.py
