@@ -142,7 +142,7 @@ datastore_doc = latest_doc.copy()
 datastore_doc.pop("_id", None)  # remove Mongo _id
 
 # Add prediction metadata
-datastore_doc["prediction_date"] = datetime.now(timezone.utc)
+datastore_doc["prediction_date"] = datetime.now(UTC) + timedelta(hours=5) #PKT time
 
 # Add predicted AQI values
 datastore_doc["AQI_t+1_pred"] = float(pred[0])
@@ -155,4 +155,5 @@ datastore_doc["AQI_t+3_pred"] = float(pred[2])
 db.datastore.insert_one(datastore_doc)
 
 print("✅ Last AQI feature row + predictions stored in datastore")
+
 
