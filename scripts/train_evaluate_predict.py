@@ -31,6 +31,13 @@ if df.empty:
 
 df.drop(columns=["_id"], inplace=True, errors="ignore")
 df = df.dropna().reset_index(drop=True)
+REQUIRED_ROWS = 8  # max lag (7) + 1
+
+if len(df) < REQUIRED_ROWS:
+    raise Exception(
+        f"Not enough rows to compute lag/rolling features. "
+        f"Found {len(df)}, need at least {REQUIRED_ROWS}"
+    )
 
 # -------------------------------
 # FEATURES & TARGETS
@@ -142,7 +149,7 @@ datastore_doc = latest_doc.copy()
 datastore_doc.pop("_id", None)  # remove Mongo _id
 
 # Add prediction metadata
-datastore_doc["prediction_date"] = datetime.now(UTC) + timedelta(hours=5) #PKT time
+datastore_doc["prediction_date"] = datetime.now(UTC) + timedelta(hours=5)
 
 # Add predicted AQI values
 datastore_doc["AQI_t+1"] = float(pred[0])
@@ -155,9 +162,3 @@ datastore_doc["AQI_t+3"] = float(pred[2])
 db.datastore.insert_one(datastore_doc)
 
 print("✅ Last AQI feature row + predictions stored in datastore")
-
-
-
-
-
-
