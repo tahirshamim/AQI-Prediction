@@ -1,11 +1,12 @@
 from pymongo import MongoClient
 import requests
 from datetime import datetime, UTC
+import os
 
-client = MongoClient("mongodb+srv://tahirbinshamim_db_user:42034700@cluster0.2gfzzp7.mongodb.net/?appName=Cluster0")
+client = MongoClient(os.environ["MONGO_URI"])
 db = client["aqi_mlops"]
 
-API_URL = "https://api.waqi.info/feed/A545395/?token=c417583af21dac5a62ca39cfc874cc80162e475a"
+API_URL = os.environ["WAQI_API_KEY"]
 
 try:
     res = requests.get(API_URL, timeout=10)
@@ -38,3 +39,4 @@ except ValueError as e:
 
 except Exception as e:
     print("Unexpected error:", e)
+
