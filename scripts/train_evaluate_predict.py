@@ -12,11 +12,12 @@ from sklearn.linear_model import ElasticNet
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import os
 
 # -------------------------------
 # MongoDB connection
 # -------------------------------
-client = MongoClient("mongodb+srv://tahirbinshamim_db_user:42034700@cluster0.2gfzzp7.mongodb.net/?appName=Cluster0")
+client = MongoClient(os.environ["MONGO_URI"])
 db = client["aqi_mlops"]
 
 # -------------------------------
@@ -154,3 +155,4 @@ datastore_doc["AQI_t+3_pred"] = float(pred[2])
 db.datastore.insert_one(datastore_doc)
 
 print("✅ Last AQI feature row + predictions stored in datastore")
+
