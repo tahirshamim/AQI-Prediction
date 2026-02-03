@@ -1,10 +1,8 @@
 import pandas as pd
 from pymongo import MongoClient
 from datetime import datetime, timedelta, timezone
-
-# ------------------ MongoDB ------------------
 import os
-
+# ------------------ MongoDB ------------------
 client = MongoClient(os.environ["MONGO_URI"])
 db = client["aqi_mlops"]
 
@@ -68,4 +66,5 @@ db.aqi_features.update_one(
 )
 
 print("✅ Daily AQI + features stored in aqi_features")
+
 
