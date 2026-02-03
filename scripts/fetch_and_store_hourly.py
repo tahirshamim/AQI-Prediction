@@ -24,7 +24,7 @@ try:
     aqi = int(aqi_raw)
 
     doc = {
-        "timestamp": datetime.now(UTC),
+        "timestamp": datetime.now(UTC) + timedelta(hours=5), #PKT time
         "aqi": aqi
     }
 
@@ -39,4 +39,5 @@ except ValueError as e:
 
 except Exception as e:
     print("Unexpected error:", e)
+
 
