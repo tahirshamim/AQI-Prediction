@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import joblib
 from pymongo import MongoClient
-from datetime import datetime, timezone,UTC
+from datetime import datetime, timezone, UTC, timedelta
 
 from sklearn.linear_model import ElasticNet
 from sklearn.multioutput import MultiOutputRegressor
@@ -155,6 +155,7 @@ datastore_doc["AQI_t+3"] = float(pred[2])
 db.datastore.insert_one(datastore_doc)
 
 print("✅ Last AQI feature row + predictions stored in datastore")
+
 
 
 
