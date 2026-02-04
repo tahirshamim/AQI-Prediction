@@ -20,6 +20,58 @@ import os
 client = MongoClient(os.environ["MONGO_URI"])
 db = client["aqi_mlops"]
 
+
+latest_doc = db.aqi_features.find_one(sort=[("date", -1)])
+# Get last 4 rows in ascending order (oldest → newest)
+docs = list(
+    db.datastore.find()
+    .sort("date", -1)
+    .limit(3)
+)
+docs.reverse()          
+if len(docs) < 3:
+    raise ValueError("Need at least 4 rows in datastore")
+
+# Assign for readability
+fourth_last = docs[-3]   # date = t-3
+third_last  = docs[-2]   # date = t-2
+second_last = docs[-1]   # date = t-1
+
+
+latest_aqi = latest_doc['AQI']
+
+# -------------------------------
+# Update target columns
+# -------------------------------
+
+# 2nd last row → AQI_t+1
+db.datastore.update_one(
+    {"_id": second_last["_id"]},
+    {"$set": {"AQI_t+1": latest_aqi}}
+)
+
+# 3rd last row → AQI_t+2
+db.datastore.update_one(
+    {"_id": third_last["_id"]},
+    {"$set": {"AQI_t+2": latest_aqi}}
+)
+
+# 4th last row → AQI_t+3
+db.datastore.update_one(
+    {"_id": fourth_last["_id"]},
+    {"$set": {"AQI_t+3": latest_aqi}}
+)
+
+
+
+datastore_doc = latest_doc.copy()
+datastore_doc.pop("_id", None)  # remove Mongo _id
+datastore_doc["AQI_t+1"] = np.nan
+datastore_doc["AQI_t+2"] = np.nan
+datastore_doc["AQI_t+3"] = np.nan
+db.datastore.insert_one(datastore_doc)
+print("✅ Backfilled AQI_t+1, t+2, t+3 using real AQI")
+
 # -------------------------------
 # LOAD DATA FROM MONGODB
 # -------------------------------
@@ -100,7 +152,7 @@ for i, target in enumerate(TARGETS):
 # -------------------------------
 # GET LATEST DATA FOR PREDICTION
 # -------------------------------
-latest_doc = db.aqi_features.find_one(sort=[("date", -1)])
+
 
 X_latest = pd.DataFrame(
     [[latest_doc[f] for f in FEATURES]],
@@ -136,30 +188,12 @@ prediction_document = {
 
 db.aqi_predictions.insert_one(prediction_document)
 
+print("Prediction Inserted")
 # -------------------------------
 # EXPORT PKL FILES  ✅ ADDED
 # -------------------------------
-joblib.dump(model, "elasticnet_aqi_multi_model.pkl")
-joblib.dump(scaler, "scaler.pkl")
-joblib.dump(FEATURES, "features.pkl")
-joblib.dump(evaluation_results, "evaluation_metrics.pkl")
-
-print("✅ Model trained, evaluated, predicted, stored in MongoDB, and PKLs exported")
-datastore_doc = latest_doc.copy()
-datastore_doc.pop("_id", None)  # remove Mongo _id
-
-# Add prediction metadata
-# datastore_doc["prediction_date"] = datetime.now(UTC) + timedelta(hours=5)
-
-# Add predicted AQI values
-datastore_doc["AQI_t+1"] = float(pred[0])
-datastore_doc["AQI_t+2"] = float(pred[1])
-datastore_doc["AQI_t+3"] = float(pred[2])
-
-# -------------------------------
-# INSERT INTO NEW COLLECTION: datastore
-# -------------------------------
-db.datastore.insert_one(datastore_doc)
-
-print("✅ Last AQI feature row + predictions stored in datastore")
-
+# joblib.dump(model, "elasticnet_aqi_multi_model.pkl")
+# joblib.dump(scaler, "scaler.pkl")
+# joblib.dump(FEATURES, "features.pkl")
+# joblib.dump(evaluation_results, "evaluation_metrics.pkl")
+# print("✅ Model trained, evaluated, predicted, stored in MongoDB, and PKLs exported")
