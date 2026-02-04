@@ -7,7 +7,7 @@ client = MongoClient(os.environ["MONGO_URI"])
 db = client["aqi_mlops"]
 
 # ------------------ STEP 1: Compute daily AQI from hourly ------------------
-end = datetime.now(UTC) + timedelta(hours=5) #PKT time
+end = datetime.now(UTC) + timedelta(hours=5)
 start = end - timedelta(hours=24)
 
 cursor = db.raw_aqi_hourly.find({
@@ -18,7 +18,7 @@ hourly_df = pd.DataFrame(list(cursor))
 if hourly_df.empty:
     raise Exception("No hourly data found")
 
-daily_aqi = float(hourly_df["aqi"].mean())
+daily_aqi = int(round(hourly_df["aqi"].mean()))
 
 # date = datetime(end.year, end.month, end.day, tzinfo=timezone.utc)
 date = end
@@ -49,12 +49,13 @@ history_df["day"] = history_df["date"].dt.day
 history_df["month"] = history_df["date"].dt.month
 history_df["dayofweek"] = history_df["date"].dt.dayofweek
 
-history_df["aqi_lag_1"] = history_df["AQI"].shift(1)
-history_df["aqi_lag_3"] = history_df["AQI"].shift(3)
-history_df["aqi_lag_7"] = history_df["AQI"].shift(7)
+history_df["aqi_lag_1"] = history_df["AQI"].shift(1).astype("Int32")
+history_df["aqi_lag_3"] = history_df["AQI"].shift(3).astype("Int32")
+history_df["aqi_lag_7"] = history_df["AQI"].shift(7).astype("Int32")
 
-history_df["aqi_roll_3"] = history_df["AQI"].shift(1).rolling(3).mean()
-history_df["aqi_roll_7"] = history_df["AQI"].shift(1).rolling(7).mean()
+history_df["aqi_roll_3"] = history_df["AQI"].shift(1).rolling(3).mean().round().astype("Int32")
+history_df["aqi_roll_7"] = history_df["AQI"].shift(1).rolling(7).mean().round().astype("Int32")
+
 
 latest = history_df.dropna().iloc[-1].to_dict()
 
@@ -66,8 +67,3 @@ db.aqi_features.update_one(
 )
 
 print("✅ Daily AQI + features stored in aqi_features")
-
-
-
-
-
