@@ -12,7 +12,7 @@ import os
 
 
 # ---------------- CONFIG ----------------
-MONGO_URI = st.secrets["Mongo_URI"]
+MONGO_URI = st.secrets["MONGO_URI"]
 DB_NAME = "aqi_mlops"
 
 st.set_page_config(
@@ -349,4 +349,5 @@ if st.sidebar.checkbox("Enable Auto Refresh", value=False):
     st.sidebar.caption("Refreshes every 60 seconds")
 
     st.rerun()
+
 
