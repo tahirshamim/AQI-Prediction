@@ -8,10 +8,11 @@ from pymongo import MongoClient
 from datetime import timedelta,datetime, timezone
 import plotly.express as px
 import plotly.graph_objects as go
+import os
 
 
 # ---------------- CONFIG ----------------
-MONGO_URI = "mongodb+srv://tahirbinshamim_db_user:42034700@cluster0.2gfzzp7.mongodb.net/?appName=Cluster0"
+MONGO_URI = os.environ["MONGO_URI"]
 DB_NAME = "aqi_mlops"
 
 st.set_page_config(
@@ -346,4 +347,5 @@ This dashboard monitors Air Quality Index (AQI) in Karachi using Machine Learnin
 
 if st.sidebar.checkbox("Enable Auto Refresh", value=False):
     st.sidebar.caption("Refreshes every 60 seconds")
+
     st.rerun()
