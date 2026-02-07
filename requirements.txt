@@ -5,3 +5,4 @@ pymongo
 joblib
 requests
 python-dateutil
+plotly
