@@ -163,7 +163,8 @@ except Exception as e:
 latest_date = features_df.iloc[-1]["date"]
 latest_aqi = float(features_df.iloc[-1]["AQI"])
 
-forecast_dates = pd.date_range(start=latest_date + timedelta(days=1), periods=3, freq="D")
+# forecast_dates = pd.date_range(start=latest_date + timedelta(days=1), periods=3, freq="D")
+forecast_dates = pd.date_range(start=latest_date , periods=3, freq="D")
 forecast_values = [float(predictions["AQI_t+1"]), float(predictions["AQI_t+2"]), float(predictions["AQI_t+3"])]
 
 # =====================================================
@@ -349,5 +350,6 @@ if st.sidebar.checkbox("Enable Auto Refresh", value=False):
     st.sidebar.caption("Refreshes every 60 seconds")
 
     st.rerun()
+
 
 
