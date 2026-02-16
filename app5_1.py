@@ -1,5 +1,5 @@
 # =====================================================
-# KARACHI AQI FORECAST DASHBOARD (DARK MODE ENHANCED)
+# KARACHI AQI FORECAST DASHBOARD 
 # =====================================================
 
 import streamlit as st
@@ -22,7 +22,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ---------------- CUSTOM CSS (DARK MODE OPTIMIZED) ----------------
+# ---------------- CUSTOM CSS  ----------------
 st.markdown("""
     <style>
         /* Global Font & Spacing */
@@ -456,6 +456,7 @@ if st.sidebar.checkbox("Enable Auto Refresh", value=False):
     st.sidebar.caption("Refreshes every 60 seconds")
 
     st.rerun()
+
 
 
 
