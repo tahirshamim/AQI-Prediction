@@ -211,7 +211,7 @@ if hazard_messages:
         severity_color = "#6c5ce7"
         headline = "VERY UNHEALTHY AIR WARNING"
     else:
-        severity_color = "#d63031"
+        severity_color =  "#cf4b4b"
         headline = "UNHEALTHY AIR ALERT"
 
     # Clean spacing between alerts (large separator)
@@ -233,9 +233,9 @@ if hazard_messages:
         <div style="
             background:{severity_color};
             padding:16px 24px;
-            font-weight:800;
+            font-weight:650;
             letter-spacing:1px;
-            font-size:0.8rem;
+            font-size:1rem;
             min-width:240px;
             text-align:center;
             color:white;
@@ -456,6 +456,7 @@ if st.sidebar.checkbox("Enable Auto Refresh", value=False):
     st.sidebar.caption("Refreshes every 60 seconds")
 
     st.rerun()
+
 
 
 
