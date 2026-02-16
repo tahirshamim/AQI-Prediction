@@ -9,7 +9,7 @@ from datetime import timedelta,datetime, timezone
 import plotly.express as px
 import plotly.graph_objects as go
 import os
-
+import streamlit.components.v1 as components
 
 # ---------------- CONFIG ----------------
 MONGO_URI = st.secrets["MONGO_URI"]
@@ -183,7 +183,113 @@ with col2:
         st.rerun()
 
 st.markdown("---")
+# =====================================================
+# 🚨 HAZARD ALERT SYSTEM 
+# =====================================================
 
+hazard_messages = []
+
+if latest_hour_aqi > 100:
+    hazard_messages.append(
+        f"Current AQI <b>{latest_hour_aqi}</b> • {get_aqi_color(latest_hour_aqi)[0]}"
+    )
+
+for i, val in enumerate(forecast_values):
+    if val > 100:
+        hazard_messages.append(
+            f"{forecast_dates[i].strftime('%A')} <b>{int(val)}</b> • {get_aqi_color(val)[0]}"
+        )
+
+if hazard_messages:
+
+    highest = max([latest_hour_aqi] + forecast_values)
+
+    if highest > 300:
+        severity_color = "#2d3436"
+        headline = "HAZARDOUS AIR EMERGENCY"
+    elif highest > 200:
+        severity_color = "#6c5ce7"
+        headline = "VERY UNHEALTHY AIR WARNING"
+    else:
+        severity_color = "#d63031"
+        headline = "UNHEALTHY AIR ALERT"
+
+    # Clean spacing between alerts (large separator)
+    ticker_text = " &nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp; ".join(hazard_messages)
+
+    components.html(
+    f"""
+    <div style="
+        display:flex;
+        align-items:center;
+        border-radius:16px;
+        overflow:hidden;
+        margin-bottom:25px;
+        font-family: Inter, sans-serif;
+        box-shadow:0 8px 25px rgba(0,0,0,0.15);
+    ">
+
+        <!-- Headline -->
+        <div style="
+            background:{severity_color};
+            padding:16px 24px;
+            font-weight:800;
+            letter-spacing:1px;
+            font-size:0.8rem;
+            min-width:240px;
+            text-align:center;
+            color:white;
+        ">
+            🚨 {headline}
+        </div>
+
+        <!-- Scrolling Area -->
+        <div style="
+            flex:1;
+            background:var(--secondary-background-color);
+            overflow:hidden;
+            position:relative;
+            height:54px;
+            display:flex;
+            align-items:center;
+            border-top:1px solid rgba(255,255,255,0.08);
+            border-bottom:1px solid rgba(255,255,255,0.08);
+        ">
+
+            <div class="scrolling-text" onmouseover="this.style.animationPlayState='paused'"
+                 onmouseout="this.style.animationPlayState='running'">
+                ⚠️ {ticker_text}
+            </div>
+
+        </div>
+
+    </div>
+
+    <style>
+    .scrolling-text {{
+        white-space: nowrap;
+        position: absolute;
+        animation: scrollText 22s linear infinite;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: black; /* default for light mode */
+    }}
+
+    /* Dark mode override */
+    @media (prefers-color-scheme: dark) {{
+        .scrolling-text {{
+            color: white; /* white text for dark backgrounds */
+        }}
+    }}
+
+    @keyframes scrollText {{
+        0%   {{ transform: translateX(100%); }}
+        100% {{ transform: translateX(-100%); }}
+    }}
+    </style>
+    """,
+    height=75,
+)
 # =====================================================
 # ROW 1: KEY METRICS & GAUGE
 # =====================================================
@@ -350,6 +456,7 @@ if st.sidebar.checkbox("Enable Auto Refresh", value=False):
     st.sidebar.caption("Refreshes every 60 seconds")
 
     st.rerun()
+
 
 
 
