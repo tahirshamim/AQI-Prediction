@@ -432,18 +432,34 @@ with tab3:
 # =====================================================
 # SIDEBAR
 # =====================================================
-st.sidebar.image("https://static.vecteezy.com/system/resources/previews/026/571/030/large_2x/weather-icon-with-sun-and-cloud-on-transparent-background-free-png.png", width=800)
+st.sidebar.image("https://i.ibb.co/rG948VVj/Gemini-Generated-Image-gzqa2pgzqa2pgzqa-removebg-preview.png", width=800)
+st.sidebar.markdown('BY : TAHIR BIN SHAMIM')
 st.sidebar.title("System Info")
 
 st.sidebar.success(f"**Status:** Operational")
 
 st.sidebar.markdown("### ⚙ Pipeline Architecture")
+
 st.sidebar.info("""
-1. **Ingest:** Hourly AQI Collection
-2. **Process:** Daily Aggregation
-3. **ML Core:** ElasticNet MultiOutput
-4. **Store:** MongoDB Atlas
-5. **View:** Streamlit UI
+**Pipeline Flow Summary**
+
+1. **API Hourly AQI Pipeline**  
+   → Collects real-time AQI data
+
+2. **Feature Store**  
+   → Central storage for engineered features
+
+3. **Daily Feature Pipeline**  
+   → Generates lag & rolling features
+
+4. **Daily Training Pipeline**  
+   → Updates forecasting model
+
+5. **Prediction Engine**  
+   → Produces 3-day AQI forecast
+
+6. **Interactive Dashboard**  
+   → Displays insights in real time
 """)
 
 st.sidebar.markdown("---")
@@ -456,6 +472,7 @@ if st.sidebar.checkbox("Enable Auto Refresh", value=False):
     st.sidebar.caption("Refreshes every 60 seconds")
 
     st.rerun()
+
 
 
 
