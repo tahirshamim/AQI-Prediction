@@ -1,5 +1,7 @@
 #  AQI Forecasting MLOps Pipeline
 
+🚀 **Live Demo:** https://aqi-prediction-306.streamlit.app/
+
 An end-to-end Machine Learning Operations (MLOps) project that collects real-time Air Quality Index (AQI) data, engineers predictive features, trains forecasting models, and serves multi-day AQI predictions through an interactive dashboard.
 
 This project was developed as part of an internship to demonstrate practical skills in data engineering, machine learning, and automated ML pipelines.
